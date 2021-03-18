@@ -7,7 +7,14 @@ const {
 const { Types } = require('mongoose');
 
 const countryExcludedFields = { _id: 0, __v: 0, lang: 0, localizations: 0 };
-const placeExcludedFields = { _id: 0, countryId: 0, lang: 0, localizations: 0 };
+const placeExcludedFields = {
+  _id: 0,
+  countryId: 0,
+  lang: 0,
+  localizations: 0,
+  description: 0,
+  name: 0,
+};
 
 const getAllByLang = async (lang) => {
   return await Country.aggregate()
@@ -21,7 +28,6 @@ const getAllByLang = async (lang) => {
 };
 
 const getOneByLang = async (id, lang) => {
-  console.log('getOneByLang ');
   const data = await Country.aggregate()
     .match({ _id: Types.ObjectId(id) })
     .unwind('localizations')
@@ -36,16 +42,16 @@ const getOneByLang = async (id, lang) => {
         {
           $match: { countryId: Types.ObjectId(id) },
         },
-        { $unwind: '$localizations' },
-        {
-          $match: { 'localizations.lang': lang },
-        },
-        {
-          $replaceWith: { $mergeObjects: ['$localizations', '$$ROOT'] },
-        },
+        { $unwind: '$photoUrl' },
+        // {
+        //   $match: { 'localizations.lang': lang },
+        // },
+        // {
+        //   $replaceWith: { $mergeObjects: ['$localizations', '$$ROOT'] },
+        // },
         { $project: placeExcludedFields },
       ],
-      as: 'places',
+      as: 'images',
     });
 
   const country = data[0];

@@ -40,6 +40,10 @@ const countrySchema = new Schema({
     unique: true,
     required: true,
   },
+  coordinates: {
+    type: [Number],
+    required: true,
+  },
   capitalLocation: {
     type: {
       type: String,
